@@ -13,6 +13,7 @@ bool insert_mode = false;
 bool line_num    = true;
 
 char status_msg[300];
+char *search_str   = NULL;
 
 gim_buffer_t* buf = NULL;
 
@@ -102,6 +103,27 @@ void insert_char(int c) {
      update_cursor(ARROW_RIGHT);
 }
 
+void search_next() {
+     if(search_str == NULL) return;
+
+     char* match = NULL;
+     int   x;
+
+    
+     for(int r=buf->row_y+1; r < buf->row_count-1; r++) {
+         match = strstr(buf->rows[r].render_str, search_str);
+         if(match) {
+            gim_buffer_curs_down(buf,r-buf->row_y);
+            x = gim_row_rx_to_cx(&buf->rows[r], match - buf->rows[r].render_str);
+            buf->row_y        = r;
+	    buf->screen_cur_y = r - buf->row_offset;
+	    gim_buffer_curs_home(buf);
+	    gim_buffer_curs_right(buf,x);
+	    return;
+	 }
+     } 
+}
+
 void process_input() {
      int c = tty_read_key();
 
@@ -153,15 +175,26 @@ void process_input() {
 	    } else {
 		if(c=='i') {
 		   insert_mode = true;
-	    } else if(c==':') {
-		tty_set_curpos(1,buf->screen_rows+1);
-		tty_clear_line();	
-		tty_echo_on();
-		char* cmd_str = readline(":");
-		tty_echo_off();
-		proc_cmd(cmd_str);
-		free(cmd_str);
-	       }
+	        } else if(c==':') {
+		   tty_set_curpos(1,buf->screen_rows+1);
+		   tty_clear_line();	
+		   tty_echo_on();
+	           char* cmd_str = readline(":");
+		   tty_echo_off();
+		   proc_cmd(cmd_str);
+		   free(cmd_str);
+	        } else if(c=='/') {
+                   tty_set_curpos(1,buf->screen_rows+1);
+		   tty_clear_line();
+		   tty_echo_on();
+		   char* line = readline("/");
+		   if(strlen(line)>1) {
+                      if(search_str) free(search_str);
+		      search_str = line;
+		   }
+		   tty_echo_off();
+		   search_next();
+		}
 	    }
 	break;
 	default:
@@ -173,7 +206,6 @@ void process_input() {
 
 void refresh_screen() {
      tty_disable_cursor();
-//     tty_clear_screen();
      draw_rows();
      if(insert_mode) {
        snprintf(status_msg,300,"\n\r%d/%d %s --INSERT--",buf->row_y+1,buf->row_count,buf->filename);

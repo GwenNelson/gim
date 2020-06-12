@@ -247,3 +247,15 @@ int gim_row_cx_to_rx(gim_buffer_row_t* row, int cx) {
      }
      return rx;
 }
+
+int gim_row_rx_to_cx(gim_buffer_row_t* row, int rx) {
+  int cur_rx = 0;
+  int cx;
+  for (cx = 0; cx < row->chars_len; cx++) {
+    if (row->chars[cx] == '\t')
+      cur_rx += (TAB_STOP - 1) - (cur_rx % TAB_STOP);
+    cur_rx++;
+    if (cur_rx > rx) return cx;
+  }
+  return cx;
+}

@@ -53,4 +53,5 @@ void gim_row_delete_char(gim_buffer_row_t* row, int at);
 void gim_row_append_str(gim_buffer_row_t* row, char* s, size_t len);
 
 int gim_row_cx_to_rx(gim_buffer_row_t* row, int cx);
+int gim_row_rx_to_cx(gim_buffer_row_t* row, int rx);
 #endif
