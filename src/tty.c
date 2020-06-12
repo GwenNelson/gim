@@ -116,6 +116,8 @@ size_t isdatatype(char* s) {
        if(strncmp(s,"bool "   ,5)==0) return 4;
        if(strncmp(s,"int "    ,4)==0) return 3;
        if(strncmp(s,"ssize_t ",8)==0) return 7;
+       if(strncmp(s,"typedef ",8)==0) return 7;
+       if(strncmp(s,"struct " ,7)==0) return 6;
        return 0;
 }
 
@@ -131,6 +133,16 @@ size_t iskeyword(char* s) {
        if(strncmp(s,"break;" ,6)==0) return 5;
        if(strncmp(s,"return ",7)==0) return 6;
        if(strncmp(s,"return;",7)==0) return 6;
+       return 0;
+}
+
+size_t ispreproc(char* s) {
+       if(strncmp(s,"#include "    ,9)==0) return 8;
+       if(strncmp(s,"#define "     ,8)==0) return 7;
+       if(strncmp(s,"#pragma once",12)==0) return 12;
+       if(strncmp(s,"#ifdef "      ,7)==0) return 6;
+       if(strncmp(s,"#ifndef "     ,8)==0) return 7;
+       if(strncmp(s,"#endif"       ,6)==0) return 6;
        return 0;
 }
 
@@ -173,6 +185,11 @@ void tty_write_strn_hl(char* s, size_t n) {
 	  write(STDOUT_FILENO, c, keylen);
 	  tty_write_str(ANSI_RESET_COLOR);
 	  c+=keylen; 
+        } else if((keylen=ispreproc(c)) >0 ) {
+          tty_write_str(ANSI_BLUE_COLOR);
+	  write(STDOUT_FILENO, c, keylen);
+	  tty_write_str(ANSI_RESET_COLOR);
+	  c+=keylen;
 	} else {
           tty_write_str(ANSI_RESET_COLOR);
 	  write(STDOUT_FILENO, c, 1);
