@@ -110,8 +110,14 @@ void search_next() {
      int   x;
 
     
-     for(int r=buf->row_y+1; r < buf->row_count-1; r++) {
-         match = strstr(buf->rows[r].render_str, search_str);
+     for(int r=buf->row_y; r < buf->row_count-1; r++) {
+         if(r==buf->row_y) {
+           match = strstr(buf->rows[r].render_str+buf->row_x, search_str);
+           if(match)
+	      match = strstr(buf->rows[r].render_str+buf->row_x+1, search_str);
+	 } else {
+           match = strstr(buf->rows[r].render_str, search_str);
+         }
          if(match) {
             gim_buffer_curs_down(buf,r-buf->row_y);
             x = gim_row_rx_to_cx(&buf->rows[r], match - buf->rows[r].render_str);
