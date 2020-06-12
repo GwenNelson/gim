@@ -17,7 +17,6 @@ gim_buffer_t* buf = NULL;
 void init_gim() {
      enable_raw_mode();
      tty_echo_off();
-     buf = gim_new_buffer();
      tty_clear_screen();
      tty_set_curpos(1,1);
 }
@@ -162,33 +161,23 @@ void refresh_screen() {
      tty_clear_screen();
      draw_rows();
      if(insert_mode) {
-       snprintf(status_msg,300,"\n\r%d/%d --INSERT--",buf->row_y+1,buf->row_count);
+       snprintf(status_msg,300,"\n\r%d/%d %s --INSERT--",buf->row_y+1,buf->row_count,buf->filename);
      } else {
-       snprintf(status_msg,300,"\n\r%d/%d",buf->row_y+1,buf->row_count);
+       snprintf(status_msg,300,"\n\r%d/%d %s ",buf->row_y+1,buf->row_count,buf->filename);
      }
      tty_write_str(status_msg); 
      tty_set_curpos(buf->row_x+1,buf->screen_cur_y+1);
      tty_enable_cursor();
 }
 
-void open_file(char* filename) {
-     FILE* fd = fopen(filename, "r");
-     size_t line_len = 0;
-     char* line = NULL;
-     while(getline(&line,&line_len,fd) != -1) {
-          char* endline = strrchr(line,'\n');
-	  if(endline != NULL) *endline=0;
-	  endline = strrchr(line,'\r');
-	  if(endline != NULL) *endline=0;
-	  gim_buffer_append_new_row(buf,line,strlen(line)+1); 
-     }
-     free(line);
-     buf->row_y = 0;
-}
-
 int main(int argc, char** argv) {
     init_gim();
-    if(argc==2) open_file(argv[1]);
+    if(argc==2) {
+	buf = gim_buffer_from_file(argv[1]);
+    } else {
+	buf = gim_new_buffer();
+	buf->filename = strdup("");
+    }
     for(;;) {
         refresh_screen();
         process_input();

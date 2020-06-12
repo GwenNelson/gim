@@ -11,11 +11,30 @@ gim_buffer_t* gim_new_buffer() {
 	return retval;
 }
 
+gim_buffer_t* gim_buffer_from_file(char* filename) {
+	gim_buffer_t* buf = gim_new_buffer();
+        FILE* fd = fopen(filename, "r");
+        size_t line_len = 0;
+        char* line = NULL;
+        while(getline(&line,&line_len,fd) != -1) {
+          char* endline = strrchr(line,'\n');
+	  if(endline != NULL) *endline=0;
+	  endline = strrchr(line,'\r');
+	  if(endline != NULL) *endline=0;
+	  gim_buffer_append_new_row(buf,line,strlen(line)+1); 
+        }
+        free(line);
+        buf->row_y = 0;
+	buf->filename = strdup(filename);
+	return buf;
+}
+
 void gim_delete_buffer(gim_buffer_t* buf) {
      for(int i=0; i < buf->row_count; i++) {
          free(buf->rows[i].chars);
 	 free(buf->rows[i].render_str);
      }
+     free(buf->filename);
      free(buf);
 }
 

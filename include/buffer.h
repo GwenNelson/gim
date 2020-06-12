@@ -22,9 +22,11 @@ typedef struct gim_buffer_t {
 	int row_y;
 	int row_count;
 	gim_buffer_row_t* rows;
+	char* filename;
 } gim_buffer_t;
 
 gim_buffer_t* gim_new_buffer();
+gim_buffer_t* gim_buffer_from_file(char* filename);
 void          gim_delete_buffer(gim_buffer_t* buf);
 
 void          gim_buffer_append_new_row(gim_buffer_t* buf, char* data, size_t len);
