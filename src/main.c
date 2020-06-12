@@ -9,6 +9,7 @@
 #include <buffer.h>
 
 bool insert_mode = false;
+bool line_num    = true;
 
 char status_msg[300];
 
@@ -66,7 +67,14 @@ void draw_rows() {
          if( y >= buf->row_count) {
             tty_write_str("~");
 	 } else {
-            tty_write_strn(buf->rows[y].render_str,buf->screen_cols-1);
+	    char lineno_buf[7];
+            if(line_num) {
+               snprintf(lineno_buf,7,"%4d ",y+1);
+	       tty_write_str(lineno_buf);
+               tty_write_strn(buf->rows[y].render_str,buf->screen_cols-6);
+	    } else {
+               tty_write_strn(buf->rows[y].render_str,buf->screen_cols-1);
+	    }
 	 }
 	 if(y < ((buf->screen_rows+buf->row_offset)-1)) {
             tty_write_str("\r\n");
@@ -77,6 +85,7 @@ void draw_rows() {
 void proc_cmd(char* cmd) {
 	if(cmd[0]=='q') close_gim(); 
 	if(cmd[0]=='w') gim_save_buffer(buf);
+	if(cmd[0]=='l') line_num = !line_num;
 }
 
 void insert_char(int c) {
@@ -167,7 +176,11 @@ void refresh_screen() {
        snprintf(status_msg,300,"\n\r%d/%d %s ",buf->row_y+1,buf->row_count,buf->filename);
      }
      tty_write_str(status_msg); 
-     tty_set_curpos(buf->row_x+1,buf->screen_cur_y+1);
+     if(line_num) {
+        tty_set_curpos(buf->row_x+6,buf->screen_cur_y+1);
+     } else {
+        tty_set_curpos(buf->row_x+1,buf->screen_cur_x+1);
+     }
      tty_enable_cursor();
 }
 
