@@ -149,10 +149,12 @@ void process_input() {
 	case BACKSPACE_KEY:
 	case CTRL_KEY('h'):
 	case DEL_KEY:
-		if(c==DEL_KEY) gim_buffer_curs_right(buf,1);
-		gim_row_delete_char(&buf->rows[buf->row_y], buf->screen_cur_x-1);
-		gim_buffer_curs_left(buf,1);
-		if(buf->rows[buf->row_y].chars_len == 1) gim_buffer_delete_row(buf, buf->row_y);
+		if(buf->row_count>0) {
+			if(c==DEL_KEY) gim_buffer_curs_right(buf,1);
+			gim_row_delete_char(&buf->rows[buf->row_y], buf->screen_cur_x-1);
+			gim_buffer_curs_left(buf,1);
+			if(buf->rows[buf->row_y].chars_len == 1) gim_buffer_delete_row(buf, buf->row_y);
+		}
 	break;
 
         case HOME_KEY:

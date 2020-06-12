@@ -91,7 +91,8 @@ void gim_buffer_append_new_row(gim_buffer_t* buf, char* data, size_t len) {
 }
 
 void gim_buffer_insert_nl(gim_buffer_t* buf) {
-     if(buf->row_x >= buf->rows[buf->row_y].chars_len) {
+     if(buf->row_count==0) gim_buffer_append_new_row(buf, "", 0);
+   	if(buf->row_x >= buf->rows[buf->row_y].chars_len) {
        gim_buffer_insert_row(buf," ",buf->row_y+1,1);
        gim_buffer_curs_down(buf,1);
        gim_buffer_curs_home(buf);
@@ -112,7 +113,8 @@ void gim_buffer_insert_nl(gim_buffer_t* buf) {
 }
 
 void gim_buffer_delete_row(gim_buffer_t* buf, int at) {
-     if(at==0 && buf->row_count==1) {
+     if(buf->row_count==0) return;
+     if(at==0) {
         buf->row_count=0;
 	return;
      }
