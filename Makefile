@@ -11,4 +11,4 @@ build/%.o: src/%.c
 	$(CC) -c $^ -o $@ $(CFLAGS) $(CPPFLAGS)
 
 gim: build/tty.o build/buffer.o build/util.o build/main.o
-	$(CC) $^ -o gim
+	$(CC) -lreadline $^ -o gim
