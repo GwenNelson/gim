@@ -30,7 +30,6 @@ void close_gim() {
 }
 
 void update_cursor(int key) {
-     int i =0;
      switch(key) {
         case PAGE_UP:
 		gim_buffer_curs_up(buf,buf->screen_rows);

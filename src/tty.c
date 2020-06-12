@@ -108,6 +108,10 @@ void tty_write_strn(char* s, size_t n) {
      }
 }
 
+bool is_separator(int c) {
+     return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];", c) != NULL;
+}
+
 size_t isdatatype(char* s) {
        if(strncmp(s,"char "   ,5)==0) return 4;
        if(strncmp(s,"char* "  ,6)==0) return 4;
@@ -150,7 +154,12 @@ void tty_write_strn_hl(char* s, size_t n) {
      char* c = s;
      size_t len = 0;
      size_t keylen = 0;
+     bool prev_sep;
      while(*c) {
+        prev_sep   = true;
+	if(c > s) {
+           prev_sep   = is_separator(*(c-1));
+	}
         if(*c == '\"') {
           tty_write_str(ANSI_MAGENTA_COLOR);
           write(STDOUT_FILENO,c,1);
@@ -170,11 +179,13 @@ void tty_write_strn_hl(char* s, size_t n) {
 	     }
 	  }
 	  tty_write_str(ANSI_RESET_COLOR);
-	} else if(isdigit(*c)) {
+	} else if(prev_sep && isdigit(*c)) {
           tty_write_str(ANSI_MAGENTA_COLOR);
-	  write(STDOUT_FILENO, c, 1);
+          while(isdigit(*c)) {
+	    write(STDOUT_FILENO, c, 1);
+	    c++;
+	  }
 	  tty_write_str(ANSI_RESET_COLOR);
-	  c++;
 	} else if((keylen=isdatatype(c)) >0 ) {
           tty_write_str(ANSI_GREEN_COLOR);
           write(STDOUT_FILENO, c, keylen);
