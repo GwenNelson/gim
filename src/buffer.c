@@ -112,10 +112,16 @@ void gim_buffer_insert_nl(gim_buffer_t* buf) {
 }
 
 void gim_buffer_delete_row(gim_buffer_t* buf, int at) {
+     if(at==0 && buf->row_count==1) {
+        buf->row_count=0;
+	return;
+     }
      if (at < 0 || at >= buf->row_count) return;
      free(buf->rows[at].chars);
      free(buf->rows[at].render_str);
-     memmove(&buf->rows[at], &buf->rows[at+1], sizeof(gim_buffer_row_t) * (buf->row_count - at - 1));
+     if(buf->row_count > 1) {
+        memmove(&buf->rows[at], &buf->rows[at+1], sizeof(gim_buffer_row_t) * (buf->row_count - at - 1));
+     }
      buf->row_count--;
      if(at == buf->row_y) gim_buffer_curs_up(buf,1);
 }
@@ -179,6 +185,7 @@ void gim_buffer_scroll(gim_buffer_t* buf) {
 }
 
 void gim_buffer_curs_up(gim_buffer_t* buf, int count) {
+     if(buf->row_count==0) return;
      for(int i=0; i<count; i++) {
          buf->screen_cur_y--;
          buf->row_y = buf->screen_cur_y + buf->row_offset;
@@ -201,6 +208,7 @@ void gim_buffer_curs_down(gim_buffer_t* buf, int count) {
 }
 
 void gim_buffer_curs_left(gim_buffer_t* buf, int count) {
+     if(buf->screen_cur_x==0) return;
      for(int i=0; i<count; i++) {
          buf->screen_cur_x--;
 	 gim_buffer_scroll(buf);
@@ -208,6 +216,7 @@ void gim_buffer_curs_left(gim_buffer_t* buf, int count) {
 }
 
 void gim_buffer_curs_right(gim_buffer_t* buf, int count) {
+     if(buf->row_count == 0) return;
      for(int i=0; i<count; i++) {
          buf->screen_cur_x++;
 	 gim_buffer_scroll(buf);

@@ -90,6 +90,7 @@ void proc_cmd(char* cmd) {
 	if(cmd[0]=='q') close_gim(); 
 	if(cmd[0]=='w') gim_save_buffer(buf);
 	if(cmd[0]=='l') line_num = !line_num;
+	if(cmd[0]=='d') gim_buffer_delete_row(buf, buf->row_y);
 }
 
 void insert_char(int c) {
