@@ -29,6 +29,14 @@ gim_buffer_t* gim_buffer_from_file(char* filename) {
 	return buf;
 }
 
+void gim_save_buffer(gim_buffer_t* buf) {
+     FILE* fd = fopen(buf->filename,"w");
+     for(int i=0; i<buf->row_count; i++) {
+	fprintf(fd,"%s\n",buf->rows[i].chars);
+     }
+     fclose(fd);
+}
+
 void gim_delete_buffer(gim_buffer_t* buf) {
      for(int i=0; i < buf->row_count; i++) {
          free(buf->rows[i].chars);
@@ -84,7 +92,7 @@ void gim_buffer_append_new_row(gim_buffer_t* buf, char* data, size_t len) {
 
 void gim_buffer_insert_nl(gim_buffer_t* buf) {
      if(buf->screen_cur_x==0) {
-        gim_buffer_insert_row(buf,"", buf->row_y,0);
+        gim_buffer_insert_row(buf," ", buf->row_y,1);
      } else {
         gim_buffer_row_t* row = &buf->rows[buf->row_y];
 	gim_buffer_insert_row(buf, &row->chars[buf->row_x], buf->row_y + 1, row->chars_len - buf->row_x);

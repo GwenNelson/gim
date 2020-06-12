@@ -76,6 +76,7 @@ void draw_rows() {
 
 void proc_cmd(char* cmd) {
 	if(cmd[0]=='q') close_gim(); 
+	if(cmd[0]=='w') gim_save_buffer(buf);
 }
 
 void insert_char(int c) {
@@ -83,7 +84,7 @@ void insert_char(int c) {
         gim_buffer_append_new_row(buf," ",1);
         if(buf->row_y==-1) buf->row_y=0;
      }
-     gim_row_insert_char(&buf->rows[buf->row_y],buf->screen_cur_x,c); 
+     gim_row_insert_char(&buf->rows[buf->row_y],buf->row_x,c); 
      update_cursor(ARROW_RIGHT);
 }
 

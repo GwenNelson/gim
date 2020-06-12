@@ -29,6 +29,8 @@ gim_buffer_t* gim_new_buffer();
 gim_buffer_t* gim_buffer_from_file(char* filename);
 void          gim_delete_buffer(gim_buffer_t* buf);
 
+void          gim_save_buffer(gim_buffer_t* buf);
+
 void          gim_buffer_append_new_row(gim_buffer_t* buf, char* data, size_t len);
 void          gim_buffer_insert_row    (gim_buffer_t* buf, char* data, int at, size_t len);
 void          gim_buffer_delete_row    (gim_buffer_t* buf, int at);
