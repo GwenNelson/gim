@@ -137,7 +137,9 @@ void process_input() {
             if(insert_mode) {
 		insert_char(c);
 	    } else {
-               if(c==':') {
+		if(c=='i') {
+		   insert_mode = true;
+	    } else if(c==':') {
 		tty_set_curpos(1,buf->screen_rows+1);
 		tty_clear_line();	
 		tty_echo_on();

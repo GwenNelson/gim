@@ -151,7 +151,8 @@ void gim_buffer_curs_up(gim_buffer_t* buf, int count) {
 }
 
 void gim_buffer_curs_down(gim_buffer_t* buf, int count) {
-     for(int i=0; i<count; i++) {
+     if(buf->row_count == 0) return;
+   	for(int i=0; i<count; i++) {
          if(buf->row_y <= buf->row_count) {
             buf->screen_cur_y++;
 	    buf->row_y = buf->screen_cur_y + buf->row_offset;
