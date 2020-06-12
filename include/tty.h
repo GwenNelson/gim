@@ -40,15 +40,18 @@ enum tty_key {
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-#define ANSI_CLR_SCR     "\x1b[2J"
-#define ANSI_SET_CURPOS  "\x1b[%d;%dH"
-#define ANSI_GET_CURPOS  "\x1b[6n"
-#define ANSI_CUR_FORWARD "\x1b[%dC"
-#define ANSI_CUR_DOWN    "\x1b[%dB"
-#define ANSI_ECHO_ON     "\x1b[12h"
-#define ANSI_ECHO_OFF    "\x1b[12l"
-#define ANSI_CUR_HIDE    "\x1b[?25l"
-#define ANSI_CUR_SHOW    "\x1b[?25h"
-#define ANSI_CLR_LINE    "\x1b[K"
+#define ANSI_CLR_SCR      "\x1b[2J"
+#define ANSI_SET_CURPOS   "\x1b[%d;%dH"
+#define ANSI_GET_CURPOS   "\x1b[6n"
+#define ANSI_CUR_FORWARD  "\x1b[%dC"
+#define ANSI_CUR_DOWN     "\x1b[%dB"
+#define ANSI_ECHO_ON      "\x1b[12h"
+#define ANSI_ECHO_OFF     "\x1b[12l"
+#define ANSI_CUR_HIDE     "\x1b[?25l"
+#define ANSI_CUR_SHOW     "\x1b[?25h"
+#define ANSI_CLR_LINE     "\x1b[K"
+#define ANSI_RESET_COLOR  "\x1b[0m"
+#define ANSI_BLUE_COLOR   "\x1b[34m"
+#define ANSI_YELLOW_COLOR "\x1b[33m"
 
 #endif

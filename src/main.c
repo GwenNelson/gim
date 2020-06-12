@@ -65,12 +65,16 @@ void draw_rows() {
      for(y=buf->row_offset; y<buf->screen_rows+buf->row_offset; y++) {
          tty_clear_line();
          if( y >= buf->row_count) {
-            tty_write_str("~");
+		 tty_write_str(ANSI_BLUE_COLOR);
+     		 tty_write_str("~");
+		 tty_write_str(ANSI_RESET_COLOR);
 	 } else {
 	    char lineno_buf[7];
             if(line_num) {
                snprintf(lineno_buf,7,"%4d ",y+1);
+	       tty_write_str(ANSI_YELLOW_COLOR);
 	       tty_write_str(lineno_buf);
+	       tty_write_str(ANSI_RESET_COLOR);
                tty_write_strn(buf->rows[y].render_str,buf->screen_cols-6);
 	    } else {
                tty_write_strn(buf->rows[y].render_str,buf->screen_cols-1);
