@@ -79,6 +79,15 @@ void proc_cmd(char* cmd) {
 	if(cmd[0]=='q') close_gim(); 
 }
 
+void insert_char(int c) {
+     if(buf->row_y == buf->row_count || buf->row_y==-1) {
+        gim_buffer_append_new_row(buf," ",1);
+        if(buf->row_y==-1) buf->row_y=0;
+     }
+     gim_row_insert_char(&buf->rows[buf->row_y],buf->screen_cur_x,c); 
+     update_cursor(ARROW_RIGHT);
+}
+
 void process_input() {
      int c = tty_read_key();
 
@@ -99,7 +108,7 @@ void process_input() {
 	case CTRL_KEY('h'):
 	case DEL_KEY:
 		if(c==DEL_KEY) gim_buffer_curs_right(buf,1);
-		gim_row_delete_char(&buf->rows[buf->row_y], buf->row_x-1);
+		gim_row_delete_char(&buf->rows[buf->row_y], buf->screen_cur_x-1);
 		gim_buffer_curs_left(buf,1);
 		if(buf->rows[buf->row_y].chars_len == 1) gim_buffer_delete_row(buf, buf->row_y);
 	break;
@@ -121,14 +130,12 @@ void process_input() {
 	      gim_buffer_curs_down(buf,1);
 	    }
 	break;
+	case '\t':
+	    if(insert_mode) insert_char(c);
+	break;
 	case 32 ... 126:
             if(insert_mode) {
-	       if(buf->row_y == buf->row_count || buf->row_y==-1) {
-		    gim_buffer_append_new_row(buf," ",1);
-                    if(buf->row_y==-1) buf->row_y=0;
-	       }
-               gim_row_insert_char(&buf->rows[buf->row_y],buf->screen_cur_x,c); 
-               update_cursor(ARROW_RIGHT);
+		insert_char(c);
 	    } else {
                if(c==':') {
 		tty_set_curpos(1,buf->screen_rows+1);
