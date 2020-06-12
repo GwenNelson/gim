@@ -211,6 +211,7 @@ void process_input() {
 
 
 void refresh_screen() {
+     tty_clear_screen();
      tty_disable_cursor();
      draw_rows();
      if(insert_mode) {
@@ -218,6 +219,7 @@ void refresh_screen() {
      } else {
        snprintf(status_msg,300,"\n\r%d/%d %s ",buf->row_y+1,buf->row_count,buf->filename);
      }
+     tty_clear_line();
      tty_write_str(status_msg); 
      if(line_num) {
         tty_set_curpos(buf->row_x+6,buf->screen_cur_y+1);

@@ -25,7 +25,7 @@ void tty_echo_off();
 void tty_get_size(int* rows, int* cols);
 
 enum tty_key {
-     ESCAPE_KEY    = 27,
+     ESCAPE_KEY    = '\x1b',
      BACKSPACE_KEY = 127,
      ARROW_LEFT    = 1000,
      ARROW_RIGHT,
