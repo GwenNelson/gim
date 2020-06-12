@@ -109,9 +109,28 @@ void tty_write_strn(char* s, size_t n) {
 }
 
 size_t isdatatype(char* s) {
+       if(strncmp(s,"char "   ,5)==0) return 4;
+       if(strncmp(s,"char* "  ,6)==0) return 4;
+       if(strncmp(s,"char** " ,7)==0) return 4;
+       if(strncmp(s,"void "   ,5)==0) return 4;
+       if(strncmp(s,"bool "   ,5)==0) return 4;
+       if(strncmp(s,"int "    ,4)==0) return 3;
+       if(strncmp(s,"ssize_t ",8)==0) return 7;
+       return 0;
+}
 
-       if(strncmp(s,"void ",5)==0) return 5;
-       if(strncmp(s,"int " ,3)==0) return 3;
+size_t iskeyword(char* s) {
+       if(strncmp(s,"if( "   ,3)==0) return 2;
+       if(strncmp(s,"if ("   ,4)==0) return 2;
+       if(strncmp(s,"for ("  ,5)==0) return 3;
+       if(strncmp(s,"for("   ,4)==0) return 3;
+       if(strncmp(s,"else "  ,5)==0) return 4;
+       if(strncmp(s,"switch ",7)==0) return 6;
+       if(strncmp(s,"switch(",7)==0) return 6;
+       if(strncmp(s,"case "  ,5)==0) return 4;
+       if(strncmp(s,"break;" ,6)==0) return 5;
+       if(strncmp(s,"return ",7)==0) return 6;
+       if(strncmp(s,"return;",7)==0) return 6;
        return 0;
 }
 
@@ -120,8 +139,27 @@ void tty_write_strn_hl(char* s, size_t n) {
      size_t len = 0;
      size_t keylen = 0;
      while(*c) {
-        if(isdigit(*c)) {
-          tty_write_str(ANSI_RED_COLOR);
+        if(*c == '\"') {
+          tty_write_str(ANSI_MAGENTA_COLOR);
+          write(STDOUT_FILENO,c,1);
+          c++;
+	  while(*c) {
+             if(*c == '\\') {
+                write(STDOUT_FILENO, c, 1);
+                c++;
+		write(STDOUT_FILENO, c, 1);
+	     } else if (*c == '\"') {
+                write(STDOUT_FILENO, c, 1);
+                c++;
+		break;
+	     } else {
+                write(STDOUT_FILENO, c, 1);
+		c++;
+	     }
+	  }
+	  tty_write_str(ANSI_RESET_COLOR);
+	} else if(isdigit(*c)) {
+          tty_write_str(ANSI_MAGENTA_COLOR);
 	  write(STDOUT_FILENO, c, 1);
 	  tty_write_str(ANSI_RESET_COLOR);
 	  c++;
@@ -130,6 +168,11 @@ void tty_write_strn_hl(char* s, size_t n) {
           write(STDOUT_FILENO, c, keylen);
           tty_write_str(ANSI_RESET_COLOR);
 	  c+=keylen;
+        } else if((keylen=iskeyword(c)) >0 ) {
+          tty_write_str(ANSI_YELLOW_COLOR);
+	  write(STDOUT_FILENO, c, keylen);
+	  tty_write_str(ANSI_RESET_COLOR);
+	  c+=keylen; 
 	} else {
           tty_write_str(ANSI_RESET_COLOR);
 	  write(STDOUT_FILENO, c, 1);
