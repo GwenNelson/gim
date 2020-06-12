@@ -117,6 +117,7 @@ void gim_buffer_delete_row(gim_buffer_t* buf, int at) {
      free(buf->rows[at].render_str);
      memmove(&buf->rows[at], &buf->rows[at+1], sizeof(gim_buffer_row_t) * (buf->row_count - at - 1));
      buf->row_count--;
+     if(at == buf->row_y) gim_buffer_curs_up(buf,1);
 }
 
 gim_buffer_row_t* gim_buffer_get_row(gim_buffer_t* buf, int at) {
@@ -186,6 +187,7 @@ void gim_buffer_curs_up(gim_buffer_t* buf, int count) {
 }
 
 void gim_buffer_curs_down(gim_buffer_t* buf, int count) {
+     if(buf->row_y >= buf->row_count) return;
      if(buf->row_count == 0) return;
    	for(int i=0; i<count; i++) {
          if(buf->row_y <= buf->row_count) {
