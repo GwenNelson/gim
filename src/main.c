@@ -7,6 +7,7 @@
 #include <readline/readline.h>
 #include <tty.h>
 #include <buffer.h>
+#include <termios.h>
 
 bool insert_mode = false;
 bool line_num    = true;
@@ -172,7 +173,7 @@ void process_input() {
 
 void refresh_screen() {
      tty_disable_cursor();
-     tty_clear_screen();
+//     tty_clear_screen();
      draw_rows();
      if(insert_mode) {
        snprintf(status_msg,300,"\n\r%d/%d %s --INSERT--",buf->row_y+1,buf->row_count,buf->filename);
@@ -183,7 +184,7 @@ void refresh_screen() {
      if(line_num) {
         tty_set_curpos(buf->row_x+6,buf->screen_cur_y+1);
      } else {
-        tty_set_curpos(buf->row_x+1,buf->screen_cur_x+1);
+        tty_set_curpos(buf->row_x+1,buf->screen_cur_y+1);
      }
      tty_enable_cursor();
 }

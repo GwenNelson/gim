@@ -169,6 +169,7 @@ void tty_write_strn_hl(char* s, size_t n) {
                 write(STDOUT_FILENO, c, 1);
                 c++;
 		write(STDOUT_FILENO, c, 1);
+		c++;
 	     } else if (*c == '\"') {
                 write(STDOUT_FILENO, c, 1);
                 c++;
