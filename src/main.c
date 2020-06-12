@@ -75,9 +75,9 @@ void draw_rows() {
 	       tty_write_str(ANSI_YELLOW_COLOR);
 	       tty_write_str(lineno_buf);
 	       tty_write_str(ANSI_RESET_COLOR);
-               tty_write_strn(buf->rows[y].render_str,buf->screen_cols-6);
+               tty_write_strn_hl(buf->rows[y].render_str,buf->screen_cols-6);
 	    } else {
-               tty_write_strn(buf->rows[y].render_str,buf->screen_cols-1);
+               tty_write_strn_hl(buf->rows[y].render_str,buf->screen_cols-1);
 	    }
 	 }
 	 if(y < ((buf->screen_rows+buf->row_offset)-1)) {

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
 
 #include <util.h>
 #include <tty.h>
@@ -103,6 +105,39 @@ void tty_write_strn(char* s, size_t n) {
 	tty_write_str(s);
      } else {
         write(STDOUT_FILENO, s, n);
+     }
+}
+
+size_t isdatatype(char* s) {
+
+       if(strncmp(s,"void ",5)==0) return 5;
+       if(strncmp(s,"int " ,3)==0) return 3;
+       return 0;
+}
+
+void tty_write_strn_hl(char* s, size_t n) {
+     char* c = s;
+     size_t len = 0;
+     size_t keylen = 0;
+     while(*c) {
+        if(isdigit(*c)) {
+          tty_write_str(ANSI_RED_COLOR);
+	  write(STDOUT_FILENO, c, 1);
+	  tty_write_str(ANSI_RESET_COLOR);
+	  c++;
+	} else if((keylen=isdatatype(c)) >0 ) {
+          tty_write_str(ANSI_GREEN_COLOR);
+          write(STDOUT_FILENO, c, keylen);
+          tty_write_str(ANSI_RESET_COLOR);
+	  c+=keylen;
+	} else {
+          tty_write_str(ANSI_RESET_COLOR);
+	  write(STDOUT_FILENO, c, 1);
+	  c++;
+	}
+        tty_write_str(ANSI_RESET_COLOR);
+        len++;
+	if(len>n) return;
      }
 }
 
