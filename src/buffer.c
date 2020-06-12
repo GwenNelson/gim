@@ -91,6 +91,12 @@ void gim_buffer_append_new_row(gim_buffer_t* buf, char* data, size_t len) {
 }
 
 void gim_buffer_insert_nl(gim_buffer_t* buf) {
+     if(buf->row_x >= buf->rows[buf->row_y].chars_len) {
+       gim_buffer_insert_row(buf," ",buf->row_y+1,1);
+       gim_buffer_curs_down(buf,1);
+       gim_buffer_curs_home(buf);
+       return;
+     }
      if(buf->screen_cur_x==0) {
         gim_buffer_insert_row(buf," ", buf->row_y,1);
      } else {
@@ -166,7 +172,9 @@ void gim_buffer_scroll(gim_buffer_t* buf) {
          if(buf->screen_cur_x > (buf->screen_cols-1)) buf->screen_cur_x = buf->screen_cols-1;
      }
      buf->row_x = gim_row_cx_to_rx(&buf->rows[buf->row_y], buf->screen_cur_x);
-
+     if(buf->row_y >= buf->row_count) {
+        gim_buffer_curs_up(buf,buf->row_y - buf->row_count + 1);
+     }
 }
 
 void gim_buffer_curs_up(gim_buffer_t* buf, int count) {
